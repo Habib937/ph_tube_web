@@ -1,3 +1,16 @@
+function getTime(time) {
+    let hour = parseInt(time / 3600);          
+    let minute = parseInt((time % 3600) / 60); 
+    let second = time % 60;   
+    
+    return `${hour} hour ${minute} min ${second} sec ago`;
+}
+
+
+
+
+
+
 // create loadCatagories
 const loadCatagories = () => {
     // fetch the data
@@ -42,16 +55,31 @@ const loadVideos = () => {
     const videoContainer = document.getElementById("videos");
     videos.forEach((video) =>{
         console.log(video)
+        
+        let date= video.others.posted_date
+
+        let post=date.slice(0,4)
+        if(!post){
+            post="no viewer"
+            
+        }
+        
+
         const card = document.createElement("div")
         card.classList = "card card-compact"
         card.innerHTML=
         `<figure class= "h-[200px] relative">
     <img
       src=${video.thumbnail}
-      class = "h-full w-full object-cover" 
+      class = "h-full w-full object-cover relative" 
       alt="Shoes" />
-    <span class="absolate right-2 bottom-2 bg-black rounded text-white p-1" >${video.others.posted_date}
-      </span>
+      ${video.others.posted_date?.length==0 ? ""
+        :
+        ` <span class="absolute right-2 bottom-2 bg-black text-white rounded p-1 " >
+    ${getTime(video.others.posted_date)}
+      </span>`}
+      
+   
   </figure>
   <div class="px-0 py-2 flex gap-2">
         <div>
