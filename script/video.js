@@ -5,20 +5,13 @@ function getTime(time) {
     
     return `${hour} hour ${minute} min ${second} sec ago`;
 }
-
-
 const removeActiveClass =() =>{
     const buttons = document.getElementsByClassName("category-btn")
     console.log(buttons)
-
-
-    for(let btn of buttons){
+     for(let btn of buttons){
         btn.classList.remove("active")
     }
 } 
-
-
-
 // create loadCatagories
 const loadCatagories = () => {
     // fetch the data
@@ -28,7 +21,6 @@ const loadCatagories = () => {
     .then((data) => displayCatagories(data.categories))
     .catch((error) => console.log(error));
 };
-
 const loadVideos = (searchText ="") => {
     // fetch the data
 // create load
@@ -37,22 +29,18 @@ const loadVideos = (searchText ="") => {
     .then((data) => displayVideos(data.videos))
     .catch((error) => console.log(error));
 };
-
 const loadCatagoryVideos= (id) =>{
     // alert (id)
     fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
     .then((res) => res.json())
     .then((data) => {
         removeActiveClass();
-
         const activeBtn = document.getElementById(`btn-${id}`)
         activeBtn.classList.add("active")
         displayVideos(data.category)
     })
     .catch((error) => console.log(error));
-
 }
-
 const loadDetails = async (videoId) => {
     const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`
     const res = await fetch(uri)
@@ -67,12 +55,8 @@ const displayDetails = (video) =>{
     <p>${video.description}</p>
     `
     document.getElementById("customModal").showModal()
-
 }
-
-
-
- const displayVideos = (videos) => {
+const displayVideos = (videos) => {
     const videoContainer = document.getElementById("videos");
     videoContainer.innerHTML= "";
     if(videos.length == 0){
@@ -91,17 +75,6 @@ const displayDetails = (video) =>{
         videoContainer.classList.add("grid")
     }
     videos.forEach((video) =>{
-        // console.log(video)
-        
-        // let date= video.others.posted_date
-
-        // let post=date.slice(0,4)
-        // if(!post){
-        //     post="no viewer"
-            
-        // }
-        
-
         const card = document.createElement("div")
         card.classList = "card card-compact"
         card.innerHTML=
@@ -115,9 +88,7 @@ const displayDetails = (video) =>{
         ` <span class="absolute right-2 bottom-2 bg-black text-xs text-white rounded p-1 " >
     ${getTime(video.others.posted_date)}
       </span>`}
-      
-   
-  </figure>
+       </figure>
   <div class="px-0 py-2 flex gap-2">
         <div>
             <img class = "w-10 h-10 rounded-full object-cover " src = ${video.authors[0].profile_picture} />
@@ -155,11 +126,8 @@ const displayCatagories = (categories) => {
     `
     // add button to categoryContainer
     categoryContainer.appendChild(buttonContainer)
-    
- });
-
+    });
 };
-
 document.getElementById("search-input").addEventListener("keyup", (e) =>{
     loadVideos(e.target.value)
 })
