@@ -7,7 +7,15 @@ function getTime(time) {
 }
 
 
+const removeActiveClass =() =>{
+    const buttons = document.getElementsByClassName("category-btn")
+    console.log(buttons)
 
+
+    for(let btn of buttons){
+        btn.classList.remove("active")
+    }
+} 
 
 
 
@@ -30,39 +38,68 @@ const loadVideos = () => {
     .catch((error) => console.log(error));
 };
 
-// {
-//     "category_id": "1001",
-//     "video_id": "aaaa",
-//     "thumbnail": "https://i.ibb.co/L1b6xSq/shape.jpg",
-//     "title": "Shape of You",
-//     "authors": [
-//         {
-//             "profile_picture": "https://i.ibb.co/D9wWRM6/olivia.jpg",
-//             "profile_name": "Olivia Mitchell",
-//             "verified": ""
-//         }
-//     ],
-//     "others": {
-//         "views": "100K",
-//         "posted_date": "16278"
-//     },
-//     "description": "Dive into the rhythm of 'Shape of You,' a captivating track that blends pop sensibilities with vibrant beats. Created by Olivia Mitchell, this song has already gained 100K views since its release. With its infectious melody and heartfelt lyrics, 'Shape of You' is perfect for fans looking for an uplifting musical experience. Let the music take over as Olivia's vocal prowess and unique style create a memorable listening journey."
-// }
+const loadCatagoryVideos= (id) =>{
+    // alert (id)
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then((res) => res.json())
+    .then((data) => {
+        removeActiveClass();
+
+        const activeBtn = document.getElementById(`btn-${id}`)
+        activeBtn.classList.add("active")
+        displayVideos(data.category)
+    })
+    .catch((error) => console.log(error));
+
+}
+
+const loadDetails = async (videoId) => {
+    const uri = `https://openapi.programming-hero.com/api/phero-tube/video/${videoId}`
+    const res = await fetch(uri)
+    const data = await res.json();
+    displayDetails(data.video)
+}
+const displayDetails = (video) =>{
+    console.log(video)
+    const modalContainer = document.getElementById("modal-content")
+    modalContainer.innerHTML=`
+    <img src=${video.thumbnail}/>
+    <p>${video.description}</p>
+    `
+    document.getElementById("customModal").showModal()
+
+}
 
 
 
  const displayVideos = (videos) => {
     const videoContainer = document.getElementById("videos");
+    videoContainer.innerHTML= "";
+    if(videos.length == 0){
+        videoContainer.classList.remove("grid")
+        videoContainer.innerHTML=`
+        <div class = "min-h-screen flex flex-col justify-center items-center">
+        <img class ="h-20 w-20 object-contain " src="asset/Icon.png" />
+        <h2 class ="text-center text-xl font-bold">
+        No Video Here In This Category
+        </h2>
+        </div>
+        `
+        return
+    }
+    else{
+        videoContainer.classList.add("grid")
+    }
     videos.forEach((video) =>{
-        console.log(video)
+        // console.log(video)
         
-        let date= video.others.posted_date
+        // let date= video.others.posted_date
 
-        let post=date.slice(0,4)
-        if(!post){
-            post="no viewer"
+        // let post=date.slice(0,4)
+        // if(!post){
+        //     post="no viewer"
             
-        }
+        // }
         
 
         const card = document.createElement("div")
@@ -75,7 +112,7 @@ const loadVideos = () => {
       alt="Shoes" />
       ${video.others.posted_date?.length==0 ? ""
         :
-        ` <span class="absolute right-2 bottom-2 bg-black text-white rounded p-1 " >
+        ` <span class="absolute right-2 bottom-2 bg-black text-xs text-white rounded p-1 " >
     ${getTime(video.others.posted_date)}
       </span>`}
       
@@ -94,7 +131,7 @@ const loadVideos = () => {
             
             </div>
             
-            <p> </p>
+            <p><btn onclick="loadDetails('${video.video_id}')" class ="btn btn-sm btn-error">Details</btn> </p>
         </div>
   </div>
         `
@@ -109,11 +146,15 @@ const displayCatagories = (categories) => {
  categories.forEach((item) => {
     console.log(item)
     // create btn
-    const button = document.createElement("button")
-    button.classList = 'btn';
-    button.innerText = item.category;
+    const buttonContainer = document.createElement("div")
+    buttonContainer.innerHTML=
+    `
+    <button id="btn-${item.category_id}" onclick = "loadCatagoryVideos(${item.category_id})" class="btn category-btn">
+    ${item.category}
+    </button>
+    `
     // add button to categoryContainer
-    categoryContainer.appendChild(button)
+    categoryContainer.appendChild(buttonContainer)
     
  });
 
